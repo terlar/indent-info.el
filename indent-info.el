@@ -1,21 +1,21 @@
-;;; indent-info-mode.el --- show indentation information in status bar
+;;; indent-info.el --- show indentation information in status bar
 
 ;; Copyright (C) 2017 Terje Larsen
 ;; All rights reserved.
 
 ;; Author: Terje Larsen <terlar@gmail.com>
-;; URL: https://github.com/terlar/indent-info-mode.el
+;; URL: https://github.com/terlar/indent-info.el
 ;; Keywords: convenience, tools
 ;; Version: 0.1
 
 ;; This file is NOT part of GNU Emacs.
 
-;; indent-info-mode is free software: you can redistribute it and/or modify
+;; indent-info is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
 ;; the Free Software Foundation, either version 3 of the License, or
 ;; (at your option) any later version.
 
-;; indent-info-mode is distributed in the hope that it will be useful,
+;; indent-info is distributed in the hope that it will be useful,
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;; GNU General Public License for more details.
@@ -25,7 +25,7 @@
 
 ;;; Commentary:
 
-;; `indent-info-mode' is a small Emacs minor mode that provides information
+;; `indent-info' is a small Emacs minor mode that provides information
 ;; about currently configured indentation mode as well as tab-width in the
 ;; status bar.
 
@@ -132,27 +132,6 @@ When enabled, information about the currently configured `indent-tabs-mode' and
   :lighter nil :global nil)
 
 ;;;###autoload
-(defun indent-info-cycle-tab-width-increase ()
-  "Cycle `tab-width' increasing with `indent-info-tab-width-step'.
-When reaching `indent-info-tab-width-max' it won't do anything."
-  (interactive)
-  (let ((width (+ tab-width indent-info-tab-width-step)))
-    (when (<= width indent-info-tab-width-max)
-      (setq tab-width width)
-      (message "Set tab-width to %d." width)
-      (redraw-frame))))
-
-(defun indent-info-cycle-tab-width-decrease ()
-  "Cycle `tab-width' decreasing with `indent-info-tab-width-step'.
-When reaching `indent-info-tab-width-min' it won't do anything."
-  (interactive)
-  (let ((width (- tab-width indent-info-tab-width-step)))
-    (when (>= width indent-info-tab-width-min)
-      (setq tab-width width)
-      (message "Set tab-width to %d." width)
-      (redraw-frame))))
-
-;;;###autoload
 (defun indent-info-toggle-indent-mode ()
   "Toggle indentation modes between tabs and spaces."
   (interactive)
@@ -163,6 +142,29 @@ When reaching `indent-info-tab-width-min' it won't do anything."
     (redraw-frame)))
 
 ;;;###autoload
+(defun indent-info-cycle-tab-width-increase ()
+  "Cycle `tab-width' increasing with `indent-info-tab-width-step'.
+When reaching `indent-info-tab-width-max' it won't do anything."
+  (interactive)
+  (let ((width (+ tab-width indent-info-tab-width-step)))
+    (when (<= width indent-info-tab-width-max)
+      (setq tab-width width)
+      (message "Set tab-width to %d." width)
+      (redraw-frame))))
+
+;;;###autoload
+(defun indent-info-cycle-tab-width-decrease ()
+  "Cycle `tab-width' decreasing with `indent-info-tab-width-step'.
+When reaching `indent-info-tab-width-min' it won't do anything."
+  (interactive)
+  (let ((width (- tab-width indent-info-tab-width-step)))
+    (when (>= width indent-info-tab-width-min)
+      (setq tab-width width)
+      (message "Set tab-width to %d." width)
+      (redraw-frame))))
+
+
+;;;###autoload
 (defun indent-info-mode-enable ()
   "Enable `indent-info-mode' in the current buffer."
   (if (not (minibufferp))
@@ -171,15 +173,14 @@ When reaching `indent-info-tab-width-min' it won't do anything."
 ;;;###autoload
 (define-global-minor-mode global-indent-info-mode
   indent-info-mode indent-info-mode-enable
-  :require 'indent-info-mode
+  :require 'indent-info
   :group 'indent-info)
 
-(provide 'indent-info-mode)
+(provide 'indent-info)
 
 ;; Local Variables:
 ;; coding: utf-8
-;; byte-compile-warnings: (not cl-functions)
 ;; checkdoc-minor-mode: t
 ;; End:
 
-;;; indent-info-mode.el ends here
+;;; indent-info.el ends here

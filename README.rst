@@ -1,5 +1,5 @@
 ================================================================================
-indent-info-mode.el
+indent-info.el
 ================================================================================
 
 Show indentation information in status bar. This is a small minor mode for the
@@ -36,7 +36,7 @@ Usage
 
 Put it in your load path and use it with the following code::
 
-	(require 'indent-info-mode)
+	(require 'indent-info)
 	(global-indent-info-mode +1)
 
 Configuration
@@ -60,31 +60,31 @@ liking.
 ``indent-info-use-symbols``
 	Indicates whether to use symbols for the ``tab-width`` number or not.
 
+``indent-info-tab-width-min``
+	Min `tab-width' for ``tab-width`` cycling (default: 2).
+
+``indent-info-tab-width-max``
+	Max `tab-width' for ``tab-width`` cycling (default: 8).
+
+``indent-info-tab-width-step``
+	Step to use for ``tab-width`` cycling (default: 2).
+
 ``indent-info-number-symbol-alist``
 	List of ``tab-width`` number mappings.
 	Each element is a list of the form ``(NUMBER . SYMBOL)``.
-
-``indent-tab-width-min``
-	Min `tab-width' for ``tab-width`` cycling (default: 2).
-
-``indent-tab-width-max``
-	Max `tab-width' for ``tab-width`` cycling (default: 8).
-
-``indent-tab-width-step``
-	Step to use for ``tab-width`` cycling (default: 2).
 
 Functions
 ================================================================================
 
 Three functions are also provided that you can choose to bind to some key.
 
-``toggle-indent-mode-setting``
+``indent-info-toggle-indent-mode``
 	Toggle indentation modes between tabs and spaces.
 
-``cycle-tab-width-increase``
-	Cycle ``tab-width`` increasing with ``indent-tab-width-step``.
-	When reaching ``indent-tab-width-max`` it won't do anything.
+``indent-info-cycle-tab-width-increase``
+	Cycle ``tab-width`` increasing with ``indent-info-tab-width-step``.
+	When reaching ``indent-info-tab-width-max`` it won't do anything.
 
-``cycle-tab-width-decrease``
-	Cycle ``tab-width`` decreasing with ``indent-tab-width-step``.
-	When reaching ``indent-tab-width-min`` it won't do anything.
+``indent-info-cycle-tab-width-decrease``
+	Cycle ``tab-width`` decreasing with ``indent-info-tab-width-step``.
+	When reaching ``indent-info-tab-width-min`` it won't do anything.
