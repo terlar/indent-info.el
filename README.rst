@@ -61,10 +61,10 @@ liking.
 	Indicates whether to use symbols for the ``tab-width`` number or not.
 
 ``indent-info-tab-width-min``
-	Min `tab-width' for ``tab-width`` cycling (default: 2).
+	Min ``tab-width`` for ``tab-width`` cycling (default: 2).
 
 ``indent-info-tab-width-max``
-	Max `tab-width' for ``tab-width`` cycling (default: 8).
+	Max ``tab-width`` for ``tab-width`` cycling (default: 8).
 
 ``indent-info-tab-width-step``
 	Step to use for ``tab-width`` cycling (default: 2).
