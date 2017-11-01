@@ -60,9 +60,9 @@ liking.
 ``indent-info-use-symbols``
 	Indicates whether to use symbols for the ``tab-width`` number or not.
 
-``indent-info-number-symbols``
-	Alist mapping ``tab-width`` numbers to the value used in the mode line.
-	A list of ``(KEY . VALUE)`` pairs.
+``indent-info-number-symbol-alist``
+	List of ``tab-width`` number mappings.
+	Each element is a list of the form ``(NUMBER . SYMBOL)``.
 
 ``indent-tab-width-min``
 	Min `tab-width' for ``tab-width`` cycling (default: 2).
