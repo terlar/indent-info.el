@@ -114,12 +114,6 @@ Each element is a list of the form (NUMBER . SYMBOL).")
         (format fmt (cdr (assoc tab-width indent-info-number-symbol-alist)))
       (format fmt (int-to-string tab-width)))))
 
-(setq mode-line-position (assq-delete-all 'indent-info-mode mode-line-position))
-(setq mode-line-position
-      (nconc
-       '((indent-info-mode (:eval (indent-info-mode-line))))
-       mode-line-position))
-
 ;;;###autoload
 (define-minor-mode indent-info-mode
   "Toggle indent-info mode
@@ -129,7 +123,10 @@ A null prefix argument turns it off.
 
 When enabled, information about the currently configured `indent-tabs-mode' and
 `tab-width' is displayed in the mode line."
-  :lighter nil :global nil)
+  :lighter nil :global nil
+  (when indent-info-mode
+    (add-to-list 'mode-line-position
+                 '(indent-info-mode (:eval (indent-info-mode-line))))))
 
 ;;;###autoload
 (defun indent-info-toggle-indent-mode ()
@@ -139,7 +136,7 @@ When enabled, information about the currently configured `indent-tabs-mode' and
         (if (eq indent-tabs-mode t) nil t))
   (let ((mode (if (eq indent-tabs-mode t) "tabs" "spaces")))
     (message "Set indentation mode to %s." mode)
-    (redraw-frame)))
+    (force-mode-line-update)))
 
 ;;;###autoload
 (defun indent-info-cycle-tab-width-increase ()
@@ -150,7 +147,7 @@ When reaching `indent-info-tab-width-max' it won't do anything."
     (when (<= width indent-info-tab-width-max)
       (setq tab-width width)
       (message "Set tab-width to %d." width)
-      (redraw-frame))))
+      (force-mode-line-update))))
 
 ;;;###autoload
 (defun indent-info-cycle-tab-width-decrease ()
@@ -161,14 +158,14 @@ When reaching `indent-info-tab-width-min' it won't do anything."
     (when (>= width indent-info-tab-width-min)
       (setq tab-width width)
       (message "Set tab-width to %d." width)
-      (redraw-frame))))
+      (force-mode-line-update))))
 
 
 ;;;###autoload
 (defun indent-info-mode-enable ()
   "Enable `indent-info-mode' in the current buffer."
-  (if (not (minibufferp))
-      (indent-info-mode 1)))
+  (unless (minibufferp)
+    (indent-info-mode 1)))
 
 ;;;###autoload
 (define-global-minor-mode global-indent-info-mode
