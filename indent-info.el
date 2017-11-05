@@ -164,7 +164,7 @@ When enabled, information about the currently configured `indent-tabs-mode' and
   (if indent-info-mode
       (add-to-list 'mode-line-position
                    '(indent-info-mode (:eval (indent-info-mode-line))))
-    (setq mode-line-position (assq-delete-all 'indent-info-mode mode-line-position))))
+    (delete 'indent-info-mode mode-line-position)))
 
 ;;;###autoload
 (define-global-minor-mode global-indent-info-mode
