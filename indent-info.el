@@ -161,9 +161,10 @@ A null prefix argument turns it off.
 When enabled, information about the currently configured `indent-tabs-mode' and
 `tab-width' is displayed in the mode line."
   :lighter nil :global nil
-  (when indent-info-mode
-    (add-to-list 'mode-line-position
-                 '(indent-info-mode (:eval (indent-info-mode-line))))))
+  (if indent-info-mode
+      (add-to-list 'mode-line-position
+                   '(indent-info-mode (:eval (indent-info-mode-line))))
+    (setq mode-line-position (assq-delete-all 'indent-info-mode mode-line-position))))
 
 ;;;###autoload
 (define-global-minor-mode global-indent-info-mode
