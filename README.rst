@@ -45,6 +45,12 @@ Configuration
 It is possible to configure the output to achieve something more to your own
 liking.
 
+``indent-info-insert-target``
+	Target list for insertion of ``indent-info-mode``.
+
+``indent-info-insert-position``
+	Position for insertion of ``indent-info-mode``.
+
 ``indent-info-prefix``
 	Text to display before the indentation info in the mode line.
 
