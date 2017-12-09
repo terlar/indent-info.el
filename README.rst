@@ -39,6 +39,18 @@ Put it in your load path and use it with the following code::
 	(require 'indent-info)
 	(global-indent-info-mode +1)
 
+
+Key bindings
+--------------------------------------------------------------------------------
+
+============ ========================================
+    Key      Action
+============ ========================================
+:kbd:`C-M-~` ``indent-info-toggle-indent-mode``
+:kbd:`C-M->` ``indent-info-cycle-tab-width-increase``
+:kbd:`C-M-<` ``indent-info-cycle-tab-width-decrease``
+============ ========================================
+
 Configuration
 ================================================================================
 
@@ -78,6 +90,9 @@ liking.
 ``indent-info-number-symbol-alist``
 	List of ``tab-width`` number mappings.
 	Each element is a list of the form ``(NUMBER . SYMBOL)``.
+
+``indent-info-minor-mode-text-properties``
+	List of text properties to apply to the ``indent-info`` mode line.
 
 Functions
 ================================================================================
