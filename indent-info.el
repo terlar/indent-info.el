@@ -69,7 +69,7 @@ Choices are `before', `after'."
 
 (defcustom indent-info-use-symbols nil
   "Indicates whether to use symbols for the `tab-width' number or not."
-  :type 'boolean
+  :type '(choice (boolean :tag "Symbols"))
   :group 'indent-info)
 
 (defcustom indent-info-tab-width-min 2
@@ -87,7 +87,7 @@ Choices are `before', `after'."
   :type 'integer
   :group 'indent-info)
 
-(defvar indent-info-number-symbol-alist
+(defcustom indent-info-number-symbol-alist
   '((1  . "➀")
     (2  . "②")
     (3  . "➂")
@@ -99,23 +99,33 @@ Choices are `before', `after'."
     (9  . "➈")
     (10 . "➉"))
   "List of `tab-width' number mappings.
-Each element is a list of the form (NUMBER . SYMBOL).")
+Each element is a list of the form (NUMBER . SYMBOL)."
+  :type '(alist :key-type (integer :tag "Number")
+                :value-type (string :tag "Symbol"))
+  :group 'indent-info)
+
+(defcustom indent-info-minor-mode-text-properties
+  '('local-map
+    '(keymap
+      (mode-line keymap
+                 (mouse-1 . indent-info-toggle-indent-mode)
+                 (mouse-4 . indent-info-cycle-tab-width-increase)
+                 (mouse-5 . indent-info-cycle-tab-width-decrease)))
+    'help-echo
+    "Indentation\n\ mouse-1: Toggle tabs/spaces\n\ mouse-4: Increase tab-width\n\ mouse-5: Decrease tab-width"
+    'mouse-face 'mode-line-highlight)
+  "List of text properties to apply to the `indent-info' mode line."
+  :type '(repeat sexp)
+  :group 'indent-info)
 
 (defun indent-info-mode-line ()
-  "The modeline with menu and content."
-  (let* ((map
-          '(keymap
-            (mode-line keymap
-                       (mouse-1 . indent-info-toggle-indent-mode)
-                       (mouse-4 . indent-info-cycle-tab-width-increase)
-                       (mouse-5 . indent-info-cycle-tab-width-decrease))))
-         (help "Indentation\n\ mouse-1: Toggle tabs/spaces\n\ mouse-4: Increase tab-width\n\ mouse-5: Decrease tab-width"))
-    (concat indent-info-prefix
-            (propertize (indent-info-mode-line-text)
-                        'help-echo help
-                        'mouse-face 'mode-line-highlight
-                        'local-map map)
-            indent-info-suffix)))
+  "The mode line with menu and content."
+  (concat indent-info-prefix
+          (eval
+           `(propertize
+             ,(indent-info-mode-line-text)
+             ,@indent-info-minor-mode-text-properties))
+          indent-info-suffix))
 
 (defun indent-info-mode-line-text ()
   "The indentation information text."
