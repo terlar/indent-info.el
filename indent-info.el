@@ -118,6 +118,14 @@ Each element is a list of the form (NUMBER . SYMBOL)."
   :type '(repeat sexp)
   :group 'indent-info)
 
+(defvar indent-info-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "C-M-~") 'indent-info-toggle-indent-mode)
+    (define-key map (kbd "C-M->") 'indent-info-cycle-tab-width-increase)
+    (define-key map (kbd "C-M-<") 'indent-info-cycle-tab-width-decrease)
+    map)
+  "The keymap for `indent-info-mode'.")
+
 (defun indent-info-mode-line ()
   "The mode line with menu and content."
   (concat indent-info-prefix
@@ -182,7 +190,9 @@ A null prefix argument turns it off.
 
 When enabled, information about the currently configured `indent-tabs-mode' and
 `tab-width' is displayed in the mode line."
-  :lighter nil :global nil
+  :lighter nil
+  :global nil
+  :keymap indent-info-mode-map
   (if indent-info-mode
       (add-to-list indent-info-insert-target
                    '(indent-info-mode (:eval (indent-info-mode-line)))
