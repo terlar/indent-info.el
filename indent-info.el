@@ -1,4 +1,4 @@
-;;; indent-info.el --- show indentation information in status bar
+;;; indent-info.el --- Show indentation information in status bar -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2018 Terje Larsen
 ;; All rights reserved.
@@ -7,6 +7,7 @@
 ;; URL: https://github.com/terlar/indent-info.el
 ;; Keywords: convenience, tools
 ;; Version: 0.2.0
+;; Package-Requires: ((emacs "24.3"))
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -39,12 +40,12 @@
   :group 'modeline)
 
 (defcustom indent-info-insert-target 'mode-line-position
-  "Target list for insertion of `indent-info-mode'."
+  "Target list for insertion of the indentation information."
   :type 'symbol
   :group 'indent-info)
 
 (defcustom indent-info-insert-position 'before
-  "Position for insertion of `indent-info-mode'.
+  "Position for insertion of indentation information.
 Choices are `before', `after'."
   :type '(choice (const :tag "Before insert target" before)
                  (const :tag "After insert target" after))
@@ -127,7 +128,7 @@ Each element is a list of the form (NUMBER . SYMBOL)."
     (define-key map (kbd "C-M->") 'indent-info-cycle-tab-width-increase)
     (define-key map (kbd "C-M-<") 'indent-info-cycle-tab-width-decrease)
     map)
-  "The keymap for `indent-info-mode'.")
+  "The keymap for when indentation information mode is active.")
 
 (defun indent-info-mode-line ()
   "The mode line with menu and content."
@@ -148,7 +149,7 @@ Each element is a list of the form (NUMBER . SYMBOL)."
       (format fmt (int-to-string tab-width)))))
 
 (defun indent-info-mode-enable ()
-  "Enable `indent-info-mode' in the current buffer."
+  "Enable indentation information in the current buffer."
   (unless (minibufferp)
     (indent-info-mode 1)))
 
