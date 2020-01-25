@@ -37,7 +37,7 @@ Usage
 Put it in your load path and use it with the following code::
 
 	(require 'indent-info)
-	(global-indent-info-mode +1)
+	(global-indent-info-mode 1)
 
 
 Key bindings
@@ -93,6 +93,12 @@ liking.
 
 ``indent-info-minor-mode-text-properties``
 	List of text properties to apply to the ``indent-info`` mode line.
+
+``indent-info-sync-to-editorconfig``
+	Sync configuration to editorconfig-mode when updated (default: disabled).
+
+``indent-info-sync-from-editorconfig``
+	Sync configuration from editorconfig-mode when updated (default: disabled).
 
 Functions
 ================================================================================
