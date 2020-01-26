@@ -44,7 +44,9 @@
 
 (defcustom indent-info-insert-target 'mode-line-position
   "Target list for insertion of the indentation information."
-  :type 'variable
+  :type '(choice
+          (const :tag "Lighter" nil)
+          (variable :tag "Target variable"))
   :group 'indent-info)
 
 (defcustom indent-info-insert-position 'before
@@ -251,6 +253,17 @@ When reaching `indent-info-tab-width-min' it won't do anything."
     (tabify (point-min) (point-max)))
   (setq indent-tabs-mode t))
 
+(defun indent-info--add-to-insert-target ()
+  "Add variable `indent-info--mode-line-format' to `indent-info-insert-target'."
+  (add-to-list indent-info-insert-target
+               '(indent-info-mode indent-info--mode-line-format)
+               (eq indent-info-insert-position 'after)))
+
+(defun indent-info--remove-from-insert-target ()
+  "Remove variable `indent-info--mode-line-format' from `indent-info-insert-target'."
+  (set indent-info-insert-target
+       (assq-delete-all 'indent-info-mode (symbol-value indent-info-insert-target))))
+
 ;;;###autoload
 (define-minor-mode indent-info-mode
   "Toggle indent-info mode
@@ -262,20 +275,19 @@ When enabled, information about the currently configured `indent-tabs-mode' and
 `tab-width' is displayed in the mode line."
   :group 'indent-info
   :global nil
-  :lighter nil
+  :lighter (:eval (unless indent-info-insert-target (indent-info--mode-line-format)))
   :keymap indent-info-mode-map
   (cond
    ;; Turning the mode ON
    (indent-info-mode
-    (add-to-list indent-info-insert-target
-                 '(indent-info-mode indent-info--mode-line-format)
-                 (eq indent-info-insert-position 'after))
+    (when indent-info-insert-target
+      (indent-info--add-to-insert-target))
     (when indent-info-sync-from-editorconfig
       (add-hook 'editorconfig-after-apply-functions #'indent-info--sync-from-editorconfig)))
    ;; Turning the mode OFF.
    (t
-    (set indent-info-insert-target
-         (assq-delete-all 'indent-info-mode (symbol-value indent-info-insert-target)))
+    (when indent-info-insert-target
+      (indent-info--remove-from-insert-target))
     (remove-hook 'editorconfig-after-apply-functions #'indent-info--sync-from-editorconfig))))
 
 ;;;###autoload
