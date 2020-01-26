@@ -44,7 +44,7 @@
 
 (defcustom indent-info-insert-target 'mode-line-position
   "Target list for insertion of the indentation information."
-  :type 'symbol
+  :type 'variable
   :group 'indent-info)
 
 (defcustom indent-info-insert-position 'before
