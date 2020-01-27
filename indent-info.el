@@ -131,6 +131,15 @@ Each element is a list of the form (NUMBER . SYMBOL)."
     map)
   "The keymap for when indentation information mode is active.")
 
+(defun indent-info--make-tab-width-menu ()
+  "Make menu of Tab Width."
+  (easy-menu-create-menu
+   "Tab Width"
+   (mapcar (lambda (width) (vector (number-to-string width)
+                              `(lambda () (interactive)
+                                 (indent-info--set-indentation-width ,width))))
+           (number-sequence indent-info-tab-width-min indent-info-tab-width-max indent-info-tab-width-step))))
+
 (easy-menu-define indent-info-menu indent-info-mode-map "Indent Info"
   '("Indent Info"
     [ "Convert Indentation to Spaces" indent-info-convert-to-spaces t ]
@@ -280,6 +289,7 @@ When enabled, information about the currently configured `indent-tabs-mode' and
   (cond
    ;; Turning the mode ON
    (indent-info-mode
+    (easy-menu-add-item indent-info-menu '() (indent-info--make-tab-width-menu))
     (when indent-info-insert-target
       (indent-info--add-to-insert-target))
     (when indent-info-sync-from-editorconfig
