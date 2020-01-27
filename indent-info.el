@@ -42,7 +42,7 @@
   "Display indentation information in mode line."
   :group 'modeline)
 
-(defcustom indent-info-insert-target 'mode-line-position
+(defcustom indent-info-insert-target nil
   "Target list for insertion of the indentation information."
   :type '(choice
           (const :tag "Lighter" nil)
@@ -66,12 +66,12 @@ Choices are `before', `after'."
   :type 'string
   :group 'indent-info)
 
-(defcustom indent-info-tab-format "Tab Size: %s"
+(defcustom indent-info-tab-format "Tabs[%s]"
   "Tab indentation format."
   :type 'string
   :group 'indent-info)
 
-(defcustom indent-info-space-format "Spaces: %s"
+(defcustom indent-info-space-format "Spaces[%s]"
   "Space indentation format."
   :type 'string
   :group 'indent-info)
