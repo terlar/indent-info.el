@@ -1,0 +1,76 @@
+#+TITLE: indent-info.el
+
+[[https://melpa.org/#/indent-info][file:https://melpa.org/packages/indent-info-badge.svg]]
+[[https://stable.melpa.org/#/indent-info][file:https://stable.melpa.org/packages/indent-info-badge.svg]]
+
+Show indentation information in status bar. This is a small minor mode for the mode-line
+which places itself inside the =mode-line-position= area. It displays the current
+indentation mode (Tabs or Spaces) as well as the current configured =tab-width=.
+
+You can configure it to map the numbers to different symbols or just displaying regular
+numbers. You can also configure the format string to define how you want the full thing
+displayed.
+
+* Demo
+[[./doc/demo.gif]]
+
+Settings can be controlled with the mouse, left click opens the menu, right click toggles
+indentation style, scroll up and down will change the tab-width within the specified
+ranges.
+
+* Installation
+** Manual
+#+BEGIN_SRC emacs-lisp
+(require 'indent-info)
+(global-indent-info-mode 1)
+#+END_SRC
+
+** use-package
+#+BEGIN_SRC emacs-lisp
+(use-package indent-info
+  :init
+  (global-indent-info-mode 1))
+#+END_SRC
+
+* Usage
+** Key bindings
+| Key   | Action                               |
+|-------+--------------------------------------|
+| =C-M-~= | =indent-info-toggle-indent-style=      |
+| =C-M->= | =indent-info-cycle-tab-width-increase= |
+| =C-M-<= | =indent-info-cycle-tab-width-decrease= |
+
+** Configuration
+It is possible to configure the output to achieve something more to your own liking. By
+default it has a lighter and will thus be added to the =mode-line-modes=. You can however
+instead configure it to be inserted to any other variable that is used within the mode
+line.
+
+- =indent-info-insert-target= :: Target list for insertion of the indentation information.
+- =indent-info-insert-position= :: Position for insertion of indentation information.
+- =indent-info-prefix= :: Text to display before the indentation info in the mode line.
+- =indent-info-suffix= :: Text to display after the indentation info in the mode line.
+- =indent-info-tab-format= :: Tab indentation format (default: "Tabs[%s]").
+- =indent-info-space-format= :: Tab indentation format (default: "Spaces[%s]").
+- =indent-info-use-symbols= :: Indicates whether to use symbols for the =tab-width= number or not.
+- =indent-info-tab-width-min= :: Min =tab-width= for =tab-width= cycling (default: 2).
+- =indent-info-tab-width-max= :: Max =tab-width= for =tab-width= cycling (default: 8).
+- =indent-info-tab-width-step= :: Step to use for =tab-width= cycling (default: 2).
+- =indent-info-number-symbol-alist= :: List of =tab-width= number mappings.
+  Each element is a list of the form =(NUMBER . SYMBOL)=.
+- =indent-info-indent-change-hook= :: Hook that is run after indentation settings
+  change. (default: ='(force-mode-line-update)=) Includes the =force-mode-line-update= to
+  avoid having stale information in the mode line, your setup, might or might not require
+  this.
+- =indent-info-display-change-message-p= :: Display message on changes (default: yes)
+- =indent-info-sync-to-editorconfig= :: Sync configuration to editorconfig (default: disabled).
+- =indent-info-sync-from-editorconfig= :: Sync configuration from editorconfig (default: disabled).
+
+** Public functions
+Three functions are also provided that you can choose to bind to some key.
+
+- =indent-info-toggle-indent-style= :: Toggle indentation style between tabs and spaces.
+- =indent-info-cycle-tab-width-increase= :: Cycle =tab-width= increasing with =indent-info-tab-width-step=.
+- =indent-info-cycle-tab-width-decrease= :: Cycle =tab-width= decreasing with =indent-info-tab-width-step=.
+- =indent-info-convert-to-spaces= :: Convert indentation to spaces and switch to spaces style.
+- =indent-info-convert-to-tabs= :: Convert indentation to tabs and switch to tabs style.
