@@ -192,7 +192,7 @@ Each element is a list of the form (NUMBER . SYMBOL)."
 (defun indent-info--add-to-insert-target ()
   "Add variable `indent-info--mode-line-format' to `indent-info-insert-target'."
   (add-to-list indent-info-insert-target
-               '(indent-info-mode indent-info--mode-line-format)
+               '(indent-info-mode (:eval (indent-info--mode-line-format)))
                (eq indent-info-insert-position 'after)))
 
 (defun indent-info--remove-from-insert-target ()
