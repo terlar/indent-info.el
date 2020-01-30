@@ -1,15 +1,12 @@
+{ pkgsPath ? <nixpkgs> }:
+
+with (import pkgsPath {});
+
 let
-  emacsOverlay = import (builtins.fetchTarball {
-    url = https://github.com/nix-community/emacs-overlay/archive/master.tar.gz;
+  emacspkgs = import (builtins.fetchTarball {
+    url = https://github.com/purcell/nix-emacs-ci/archive/emacs-snapshot-2020-01-27.tar.gz;
   });
-in
-{ pkgsPath ? <nixpkgs>
-, overlays ? [emacsOverlay]
-}:
 
-with (import pkgsPath { inherit overlays; });
-
-let
   emacsInit = writeText "init.el" ''
     (set-face-attribute 'default nil :height 150)
     (require 'indent-info)
@@ -37,7 +34,6 @@ let
         inherit (emacsPkgs) elpaBuild;
         inherit writeText;
       })
-      epkgs.camcorder
       epkgs.editorconfig
       epkgs.evil
     ]);
@@ -46,17 +42,7 @@ let
     dev = mkShell {
       inherit buildInputs;
     };
-
-    emacs25 = mkShell {
-      buildInputs = buildInputs ++ [(emacsWithPackages emacs25)];
-    };
-
-    emacs26 = mkShell {
-      buildInputs = buildInputs ++ [(emacsWithPackages emacs26)];
-    };
-
-    emacsGit = mkShell {
-      buildInputs = buildInputs ++ [(emacsWithPackages emacsGit)];
-    };
-  };
+  } // builtins.mapAttrs (_: value: mkShell {
+    buildInputs = buildInputs ++ [(emacsWithPackages value)];
+  }) emacspkgs;
 in shells.dev // shells
