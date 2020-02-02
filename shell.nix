@@ -23,7 +23,8 @@ let
 
   buildInputs = [
     emacsJail
-    peek
+    gifsicle
+    scrot
   ];
 
   emacsWithPackages =
@@ -36,6 +37,7 @@ let
       })
       epkgs.editorconfig
       epkgs.evil
+      epkgs.gif-screencast
     ]);
 
   shells = {
