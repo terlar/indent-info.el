@@ -9,9 +9,15 @@ let
 
   emacsInit = writeText "init.el" ''
     (set-face-attribute 'default nil :height 150)
-    (require 'indent-info)
     (scroll-bar-mode 0)
     (tool-bar-mode 0)
+
+    (with-eval-after-load 'gif-screencast
+      (define-key gif-screencast-mode-map (kbd "<f8>") 'gif-screencast-toggle-pause)
+      (define-key gif-screencast-mode-map (kbd "<f9>") 'gif-screencast-stop)
+      (setq gif-screencast-output-directory "."))
+
+    (require 'indent-info)
     (global-indent-info-mode 1)
   '';
 
@@ -21,9 +27,15 @@ let
     exec emacs -Q -l ${emacsInit}
   '';
 
+  listShells = with builtins; writeShellScriptBin "list-shells" (
+    "printf '%s\n' " + (concatStringsSep " " (attrNames shells))
+  );
+
   buildInputs = [
     emacsJail
+    listShells
     gifsicle
+    imagemagick
     scrot
   ];
 
@@ -42,7 +54,7 @@ let
 
   shells = {
     dev = mkShell {
-      inherit buildInputs;
+      buildInputs = buildInputs ++ [(emacsWithPackages emacs)];
     };
   } // builtins.mapAttrs (_: value: mkShell {
     buildInputs = buildInputs ++ [(emacsWithPackages value)];
