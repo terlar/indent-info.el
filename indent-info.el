@@ -6,7 +6,7 @@
 ;; Author: Terje Larsen <terlar@gmail.com>
 ;; URL: https://github.com/terlar/indent-info.el
 ;; Keywords: convenience, tools
-;; Version: 0.2.0
+;; Version: 1.0.0
 ;; Package-Requires: ((emacs "24.3"))
 
 ;; This file is NOT part of GNU Emacs.
@@ -247,7 +247,7 @@ Values are provided via a plist in :tabs and :width respectively."
   "Toggle indentation style between tabs and spaces."
   (interactive)
   (indent-info--set-indent :tabs (not indent-tabs-mode)))
-(define-obsolete-function-alias 'indent-info-toggle-indent-mode 'indent-info-toggle-indent-style)
+(define-obsolete-function-alias 'indent-info-toggle-indent-mode 'indent-info-toggle-indent-style "1.0.0")
 
 ;;;###autoload
 (defun indent-info-cycle-tab-width-increase ()
