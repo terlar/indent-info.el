@@ -6,7 +6,7 @@
 ;; Author: Terje Larsen <terlar@gmail.com>
 ;; URL: https://github.com/terlar/indent-info.el
 ;; Keywords: convenience, tools
-;; Version: 1.0.0
+;; Version: 2.0.0
 ;; Package-Requires: ((emacs "24.3"))
 
 ;; This file is NOT part of GNU Emacs.
@@ -27,7 +27,7 @@
 ;;; Commentary:
 
 ;; `indent-info' is a small minor mode that provides information about currently
-;; configured indentation style as well as tab-width in the status bar.
+;; configured indentation style as well as width in the status bar.
 
 ;;; Code:
 
@@ -76,22 +76,25 @@ Choices are `before', `after'."
   :group 'indent-info)
 
 (defcustom indent-info-use-symbols nil
-  "Indicates whether to use symbols for the `tab-width' number or not."
+  "Indicates whether to use symbols for the indentation number or not."
   :type '(choice (boolean :tag "Symbols"))
   :group 'indent-info)
 
-(defcustom indent-info-tab-width-min 2
-  "Min `tab-width' for `tab-width' cycling."
+(define-obsolete-variable-alias 'indent-info-tab-width-min 'indent-info-indent-min "2.0.0")
+(defcustom indent-info-indent-min 2
+  "Minimum indentation when cycling."
   :type 'integer
   :group 'indent-info)
 
-(defcustom indent-info-tab-width-max 8
-  "Max `tab-width' for `tab-width' cycling."
+(define-obsolete-variable-alias 'indent-info-tab-width-max 'indent-info-indent-max "2.0.0")
+(defcustom indent-info-indent-max 8
+  "Maximum indentation when cycling."
   :type 'integer
   :group 'indent-info)
 
-(defcustom indent-info-tab-width-step 2
-  "Step to use for `tab-width' cycling."
+(define-obsolete-variable-alias 'indent-info-tab-width-step 'indent-info-indent-step "2.0.0")
+(defcustom indent-info-indent-step 2
+  "Step to use for indentation cycling."
   :type 'integer
   :group 'indent-info)
 
@@ -106,7 +109,7 @@ Choices are `before', `after'."
     (8  . "⑧")
     (9  . "➈")
     (10 . "➉"))
-  "List of `tab-width' number mappings.
+  "List of indentation number mappings.
 Each element is a list of the form (NUMBER . SYMBOL)."
   :type '(alist :key-type (integer :tag "Number")
                 :value-type (string :tag "Symbol"))
@@ -135,21 +138,21 @@ Each element is a list of the form (NUMBER . SYMBOL)."
 (defvar indent-info-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-M-~") 'indent-info-toggle-indent-style)
-    (define-key map (kbd "C-M->") 'indent-info-cycle-tab-width-increase)
-    (define-key map (kbd "C-M-<") 'indent-info-cycle-tab-width-decrease)
+    (define-key map (kbd "C-M->") 'indent-info-indent-increase)
+    (define-key map (kbd "C-M-<") 'indent-info-indent-decrease)
     map)
   "The keymap for when indentation information mode is active.")
 
-(defun indent-info--make-tab-width-menu ()
-  "Make menu of Tab Width."
+(defun indent-info--make-indent-menu ()
+  "Make menu of indentation."
   (easy-menu-create-menu
-   "Tab Width"
-   (mapcar (lambda (width) (vector (number-to-string width)
-                              `(lambda () (interactive)
-                                 (indent-info--set-indent :width ,width))))
-           (number-sequence indent-info-tab-width-min indent-info-tab-width-max indent-info-tab-width-step))))
+   "Indentation"
+   (mapcar (lambda (indent) (vector (number-to-string indent)
+				    `(lambda () (interactive)
+                                       (indent-info--set-indent :indent ,indent))))
+           (number-sequence indent-info-indent-min indent-info-indent-max indent-info-indent-step))))
 
-(easy-menu-define indent-info-menu indent-info-mode-map "Indent Info"
+(easy-menu-define indent-info-menu indent-info-mode-map "Indent Info."
   '("Indent Info"
     [ "Convert Indentation to Spaces" indent-info-convert-to-spaces t ]
     [ "Convert Indentation to Tabs"   indent-info-convert-to-tabs t ]))
@@ -157,13 +160,13 @@ Each element is a list of the form (NUMBER . SYMBOL)."
 (defun indent-info--mode-line-format ()
   "The mode line with menu and content."
   `(,indent-info-prefix
-    (:propertize ,(indent-info--mode-line-text)
+    (:propertize (:eval (indent-info--mode-line-text))
                  mouse-face mode-line-highlight
                  help-echo
                  ,(concat "mouse-1: Display minor mode menu\n"
                           "mouse-3: Toggle tabs/spaces\n"
-                          "mouse-4: Increase tab-width\n"
-                          "mouse-5: Decrease tab-width")
+                          "mouse-4: Increase indentation\n"
+                          "mouse-5: Decrease indentation")
                  keymap
                  ,(let ((map (make-sparse-keymap)))
                     (define-key map [mode-line down-mouse-1]
@@ -173,10 +176,10 @@ Each element is a list of the form (NUMBER . SYMBOL)."
                         (indent-info-toggle-indent-style)))
                     (define-key map [mode-line mouse-4]
                       (lambda () (interactive)
-                        (indent-info-cycle-tab-width-increase)))
+                        (indent-info-indent-increase)))
                     (define-key map [mode-line mouse-5]
                       (lambda () (interactive)
-                        (indent-info-cycle-tab-width-decrease)))
+                        (indent-info-indent-decrease)))
                     map))
     ,indent-info-suffix))
 
@@ -184,10 +187,11 @@ Each element is a list of the form (NUMBER . SYMBOL)."
   "The indentation information text."
   (let ((fmt (if indent-tabs-mode
                  indent-info-tab-format
-               indent-info-space-format)))
+               indent-info-space-format))
+        (indent (if indent-tabs-mode tab-width standard-indent)))
     (if indent-info-use-symbols
-        (format fmt (cdr (assoc tab-width indent-info-number-symbol-alist)))
-      (format fmt (int-to-string tab-width)))))
+        (format fmt (cdr (assoc indent indent-info-number-symbol-alist)))
+      (format fmt (int-to-string indent)))))
 
 (defun indent-info--add-to-insert-target ()
   "Add variable `indent-info--mode-line-format' to `indent-info-insert-target'."
@@ -206,40 +210,47 @@ Each element is a list of the form (NUMBER . SYMBOL)."
     (indent-info-mode 1)))
 
 (defun indent-info--sync-to-editorconfig ()
-  "Sync `tab-width' and `indent-tabs-mode' settings to editorconfig."
+  "Sync indentation and variable `indent-tabs-mode' settings to editorconfig."
   (when (and indent-info-sync-to-editorconfig (fboundp 'editorconfig-set-indentation))
     (let ((style (if indent-tabs-mode "tab" "space")))
-      (editorconfig-set-indentation style (int-to-string tab-width)))))
+      (editorconfig-set-indentation style (int-to-string (if indent-tabs-mode tab-width standard-indent))))))
 
 (defun indent-info--sync-from-editorconfig (props)
-  "Sync `tab-width' and `indent-tabs-mode' settings from editorconfig.
+  "Sync indentation and variable `indent-tabs-mode' settings from editorconfig.
 These settings arrive as a hash within PROPS."
   (let ((use-tabs (pcase (gethash 'indent_style props)
                     ("tab" t)
                     ("space" nil)
                     (_ indent-tabs-mode)))
-        (width-str (or (gethash 'indent_size props)
-                       (gethash 'tab_width props)
-                       (number-to-string tab-width))))
+        (indent-str (or (gethash 'indent_size props)
+                        (gethash 'tab_width props))))
     (indent-info--set-indent :tabs use-tabs
-                  :width (string-to-number width-str))))
+			     :indent (if indent-str
+                                         (string-to-number indent-str)
+                                       (if use-tabs tab-width standard-indent)))))
 
 (defun indent-info-display-change-message ()
   "Display message with current indentation settings."
   (when indent-info-display-change-message-p
-    (let ((style (if indent-tabs-mode "tabs" "spaces")))
-      (message "Set indentation to %s: %s" style tab-width))))
+    (let ((style (if indent-tabs-mode "tabs" "spaces"))
+          (indent (if indent-tabs-mode tab-width standard-indent)))
+      (message "Set indentation to %s: %s" style indent))))
 
 (defun indent-info--set-indent (&rest settings)
-  "Set `indent-tabs-mode' and `tab-width' as provided by SETTINGS.
-Values are provided via a plist in :tabs and :width respectively."
+  "Set indentation and style as defined by SETTINGS.
+This will set variable `indent-tabs-mode' and `tab-width' or
+`standard-indent' depending on the value of variable
+`indent-tabs-mode'.  Values are provided via a plist in :tabs and
+:indent respectively."
   (when (plist-member settings :tabs)
     (setq indent-tabs-mode (plist-get settings :tabs)))
-  (when (plist-member settings :width)
-    (let ((width (plist-get settings :width)))
-      (setq tab-width width)
+  (when (plist-member settings :indent)
+    (let ((indent (plist-get settings :indent)))
+      (if indent-tabs-mode
+          (setq tab-width indent)
+        (setq standard-indent indent))
       (when (featurep 'evil)
-        (setq-local evil-shift-width width))))
+        (setq-local evil-shift-width indent))))
   (run-hooks 'indent-info-indent-change-hook))
 
 ;;;###autoload
@@ -250,26 +261,28 @@ Values are provided via a plist in :tabs and :width respectively."
 (define-obsolete-function-alias 'indent-info-toggle-indent-mode 'indent-info-toggle-indent-style "1.0.0")
 
 ;;;###autoload
-(defun indent-info-cycle-tab-width-increase ()
-  "Cycle `tab-width' increasing with `indent-info-tab-width-step'.
-When reaching `indent-info-tab-width-max' it won't do anything."
+(defun indent-info-indent-increase ()
+  "Increase indentation by `indent-info-indent-step'.
+When reaching `indent-info-indent-max' it won't do anything."
   (interactive)
-  (let ((width (+ tab-width indent-info-tab-width-step)))
-    (when (<= width indent-info-tab-width-max)
-      (indent-info--set-indent :width width))))
+  (let ((indent (+ (if indent-tabs-mode tab-width standard-indent) indent-info-indent-step)))
+    (when (<= indent indent-info-indent-max)
+      (indent-info--set-indent :indent indent))))
+(define-obsolete-function-alias 'indent-info-cycle-tab-width-increase 'indent-info-indent-increase "2.0.0")
 
 ;;;###autoload
-(defun indent-info-cycle-tab-width-decrease ()
-  "Cycle `tab-width' decreasing with `indent-info-tab-width-step'.
-When reaching `indent-info-tab-width-min' it won't do anything."
+(defun indent-info-indent-decrease ()
+  "Decrease indentation by `indent-info-indent-step'.
+When reaching `indent-info-indent-min' it won't do anything."
   (interactive)
-  (let ((width (- tab-width indent-info-tab-width-step)))
-    (when (>= width indent-info-tab-width-min)
-      (indent-info--set-indent :width width))))
+  (let ((indent (- (if indent-tabs-mode tab-width standard-indent) indent-info-indent-step)))
+    (when (>= indent indent-info-indent-min)
+      (indent-info--set-indent :indent indent))))
+(define-obsolete-function-alias 'indent-info-cycle-tab-width-decrease 'indent-info-indent-decrease "2.0.0")
 
 ;;;###autoload
 (defun indent-info-convert-to-spaces ()
-  "Convert indentation to spaces and switch `indent-tabs-mode' to nil."
+  "Convert indentation to spaces and switch variable `indent-tabs-mode' to nil."
   (interactive)
   (let ((tabify-regexp "^\t* [ \t]+"))
     (null tabify-regexp) ;; special variable used by tabify
@@ -278,7 +291,7 @@ When reaching `indent-info-tab-width-min' it won't do anything."
 
 ;;;###autoload
 (defun indent-info-convert-to-tabs ()
-  "Convert indentation to tabs and switch `indent-tabs-mode' to t."
+  "Convert indentation to tabs and switch variable `indent-tabs-mode' to t."
   (interactive)
   (let ((tabify-regexp "^\t* [ \t]+"))
     (null tabify-regexp) ;; special variable used by tabify
@@ -287,13 +300,14 @@ When reaching `indent-info-tab-width-min' it won't do anything."
 
 ;;;###autoload
 (define-minor-mode indent-info-mode
-  "Toggle indent-info mode
+  "Toggle indent-info mode.
 With no argument, this command toggles the mode.
 A non-null prefix argument turns the mode on.
 A null prefix argument turns it off.
 
-When enabled, information about the currently configured `indent-tabs-mode' and
-`tab-width' is displayed in the mode line."
+When enabled, information about the currently configured variable
+`indent-tabs-mode' and indentation is displayed in the mode
+line."
   :group 'indent-info
   :global nil
   :lighter (:eval (unless indent-info-insert-target (indent-info--mode-line-format)))
@@ -301,7 +315,7 @@ When enabled, information about the currently configured `indent-tabs-mode' and
   (cond
    ;; Turning the mode ON
    (indent-info-mode
-    (easy-menu-add-item indent-info-menu '() (indent-info--make-tab-width-menu))
+    (easy-menu-add-item indent-info-menu '() (indent-info--make-indent-menu))
     (when indent-info-insert-target
       (indent-info--add-to-insert-target))
     (when indent-info-display-change-message-p
